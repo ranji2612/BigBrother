@@ -1,0 +1,20 @@
+{
+  "name": "Big Brother",
+  "description": "Hack against harrasment",
+  "main": "server.js",
+  "authors": [
+    "@ranji2612"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ranji2612/BigBrother",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angularFacebookUtils": "angular-facebook-utils#^1.1.0"
+  }
+}
