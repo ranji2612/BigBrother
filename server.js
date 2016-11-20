@@ -4,7 +4,13 @@ var app      = express(); 								// create our app w/ express
 var port  	 = 8080; 				//
 var ipaddr 	 =  "0.0.0.0";
 var mongoose = require('mongoose'); 					// mongoose for mongodb
-var db = mongoose.connect('mongodb://172.30.8.117:27017/bigbrother');	
+var db = mongoose.connect('mongodb://172.30.8.117:27017/bigbrother');
+var https = require('https');
+var fs = require('fs');
+var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
 var nodemailer = require('nodemailer');
 
 //Middle-tier configuration
@@ -21,8 +27,9 @@ app.use(express.static(__dirname + '/'));
 //route file
 require('./app/routes/routes.js')(app);
 
-app.get
+var httpsServer = https.createServer(credentials, app);
+
 //Start the awesomeness
-app.listen( port, ipaddr, function() {
+httpsServer.listen( port, ipaddr, function() {
 	console.log('Magic happens on port ', port, ipaddr);
 });

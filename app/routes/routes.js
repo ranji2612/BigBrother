@@ -56,7 +56,7 @@ module.exports = function(app, passport) {
 
   app.get('/posts/postid/:postID', function(req, res) {
     // Usage Eg. $http.get('/posts/postid/'+postID)
-    Posts.find({'id': req.params.postID}, function(err, data){
+    Posts.find({'id': { "$regex": req.params.postID, "$options": "i" }, 'status': {$in : ['pending', 'true']}}, function(err, data){
       if(err) {console.log(err);}
       res.json(data);
     });
@@ -67,6 +67,21 @@ module.exports = function(app, passport) {
       if(err) console.log(err);
       res.json(data);
     });
+  });
+
+  app.get('/stats/:userID', function(req, res){
+    var result = {};
+    Posts.count({'userID': req.params.userID, 'status': 'true'}, function(err, data){
+      result.true = data;
+      Posts.count({'userID': req.params.userID, 'status': 'pending'}, function(err, data1){
+        result.pending = data1;
+        Posts.count({'userID': req.params.userID, 'status': 'false'}, function(err, data2){
+          result.false = data2;
+          res.json(result);
+        });
+      });
+    });
+
   });
 
   app.get('/*', function(req, res){

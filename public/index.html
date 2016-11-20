@@ -13,7 +13,7 @@
         -------------------------------------------------- */
 				.accepted {
 					background-color: #96f59e;
-					border-radius: 50%;
+					border-radius: 3px;
 					padding: 5px;
 					margin: 5px;
 					width: 20%;
@@ -31,6 +31,29 @@
 					padding: 15px;
 					margin: 10px;
 					font-size: 20px;
+				}
+				.fdash {
+					background-color: #ffffff;
+					padding: 15px;
+					margin: 10px;
+					font-size: 20px;
+					text-align: center;
+				}
+				.numTitle {
+
+				}
+				.numVal {
+					font-size: 32px;
+					font-weight: bold;
+					color: #ffa75d;
+				}
+				.fpostHead {
+					background-color: #ffffff;
+					border-left: 5px solid #ffa75d;
+					padding: 15px;
+					margin: 10px;
+					font-size: 24px;
+					font-weight: thin;
 				}
 				.name {
 					text-align: right;
@@ -190,6 +213,7 @@
                     <ul class="nav navbar-nav">
                         <li>
                             <!-- Calls the about page -->
+														<a href="#" ng-click="getPosts()">Update</a>
                         </li>
 												<
                     </ul>
@@ -217,15 +241,24 @@
 						<div class="col-sm-1"></div>
 						<div class="col-sm-10">
 							<br/><br/><br/>
-							<div class="row">
+							<!-- <div class="row">
 							    <div class="col-xs-12">
 							        <button class="col-xs-12 mbutton" ng-click="getPosts()">Run check</button>
 							        <div style="display:none" id="status"></div>
 							    </div>
-							</div>
-							<br/><br/>
+							</div> -->
 							<div class="row" ng-show="started">
-								<h3>Filtered Posts </h3>
+								<h3 class="col-xs-12 fpostHead">Dashboard</h3>
+								<div class="row">
+									<div class="col-xs-1 "></div>
+									<div class="col-xs-2 fdash"><p class="numVal">{{loggedInUser.score}}</p><hr/><p class="numTitle">Bad Score</p></div>
+									<div class="col-xs-2 fdash"><p class="numVal">{{stats.total}}</p><hr/><p class="numTitle">Total Filtered</p></div>
+									<div class="col-xs-1 "></div>
+									<div class="col-xs-2 fdash"><p class="numVal">{{stats.true}}</p><hr/><p class="numTitle">Reported</p></div>
+									<div class="col-xs-2 fdash"><p class="numVal">{{stats.false}}</p><hr/><p class="numTitle">False Alarm</p></div>
+									<div class="col-xs-1 "></div>
+								</div>
+								<h3 class="col-xs-12 fpostHead">Filtered Posts </h3>
 								<div class="col-sm-12 fpost" ng-repeat="post in filteredPosts">
 									{{post.message}}
 									<br/>
@@ -291,7 +324,7 @@
   <!-- <script src="scripts/landingCtrl.js" ></script>
   <script src="scripts/aboutCtrl.js" ></script> -->
   <!-- FB SDK -->
-  <script src="http://connect.facebook.net/en_US/all.js"></script>
+  <script src="https://connect.facebook.net/en_US/all.js"></script>
   <!-- End of Scripts -->
 </body>
 </html>

@@ -34,9 +34,16 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
           var userData = $scope.loggedInUser.authResponse;
           userData.email = response.email;
           $http.post('/user', userData)
-          .success(function(data){})
+          .success(function(data){
+            if('score' in data) {
+              $scope.loggedInUser.score = data['score'];
+            } else {
+              $scope.loggedInUser.score = 0;
+            }
+          })
           .error(function(err){});
           $scope.getFilteredPosts();
+          $scope.getStats();
         });
 
         setCookie('fbVal',JSON.stringify(response),1,'');
@@ -167,6 +174,14 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
       // $scope.$apply();
     })
     .error(function(err){console.log(err);});
+  };
+  $scope.getStats = function() {
+    $http.get('/stats/'+$scope.loggedInUser.authResponse.userID)
+    .success(function(data){
+      console.log(data);
+      $scope.stats = data;
+      $scope.stats.total = data.pending + data.true + data.false;
+    });
   };
   $scope.logout = function() {
     console.log('going to log out');
