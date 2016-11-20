@@ -1,6 +1,7 @@
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport('smtps://murder91%40gmail.com:Neversettle\@1234@smtp.gmail.com');
 var Users = require('./users.model');
+var Posts = require('./posts.model');
 
 module.exports = function(app, passport) {
   app.get('/email/:key', function(req, res) {
@@ -30,7 +31,10 @@ module.exports = function(app, passport) {
   })
 
   app.post('/user', function(req, res){
-      Users.findOneAndUpdate(req.body, req.body, { new: true , upsert: true})
+      Users.findOneAndUpdate({'userID':req.body.userID}, req.body, { upsert: true}, function(data, err){
+        if(err) console.log(err);
+        res.json(data);
+      });
   });
 
   app.get('/*', function(req, res){

@@ -30,6 +30,11 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
         {"fields":"email"},
         function(response) {
           $scope.loggedInUser.email = response.email;
+          var userData = $scope.loggedInUser.authResponse;
+          userData.email = response.email;
+          $http.post('/user', userData)
+          .success(function(data){})
+          .error(function(err){});
         });
 
         setCookie('fbVal',JSON.stringify(response),1,'');
