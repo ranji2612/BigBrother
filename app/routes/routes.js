@@ -5,7 +5,7 @@ var Posts = require('./posts.model');
 
 module.exports = function(app, passport) {
   app.post('/email/:key', function(req, res) {
-    console.log(req.params.key);
+    console.log("mail",req.body.data);
   		var mailOptions = {
         from: 'totran123@gmail.com', // sender address
         to: req.params.key , // list of receivers
