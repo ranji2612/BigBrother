@@ -56,13 +56,14 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
           'Thanks for logging in, ' + response.name + '!';
       });
       FB.api(
-      '/me',
+      '/'+$scope.loggedInUser.authResponse.userID,
       'GET',
       {"fields":"tagged{from,message}"},
       function(response) {
-        console.log(response.tagged.data);
+        console.log(response);
         for(var i=0; i<response.tagged.data.length; i++){
             text = getAjax(response.tagged.data[i].message);
+            $scope.posts[response.tagged.data[i].message] = response.tagged.data[i];
             dataVal = response.tagged.data[i];
             text.done(function(data) {
                 if(data.Terms==null)
@@ -71,17 +72,25 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
                 }
                 else{
                   id = '/' + dataVal.from.id;
-                  console.log(id);
-                      console.log($scope.loggedInUser.email);
-                      $http.post('/email/'+$scope.loggedInUser.email, {data: data.OriginalText})
-                      .success(function(data1){
-                          console.log("Sent message");
-                      })
-                      .error(function(err){
-                          console.log(err);
-                      });
-                  console.log(data, $scope.posts[data.OriginalText]);
+                  // Send Email
+                  $http.post('/email/'+$scope.loggedInUser.email, {data: data.OriginalText})
+                  .success(function(data1){
+                      console.log("Sent message");
+                  })
+                  .error(function(err){
+                      console.log(err);
+                  });
+                  // Filtered posts data
                   $scope.filteredPosts.push($scope.posts[data.OriginalText]);
+
+                  var filteredPostData = $scope.posts[data.OriginalText];
+                  filteredPostData['userID'] = $scope.loggedInUser.email;
+                  // filteredPostData['from'] = filteredPostData.from.id;
+                  $http.post('/post/'+$scope.loggedInUser.email, filteredPostData)
+                  .success(function(data){
+                    // yay
+                  }).error(function(err){console.log(err);});
+                  // Update view
                   $scope.$apply();
                 }
             })
@@ -117,7 +126,11 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
       );
     };
   };
-
+  $scope.logout = function() {
+    console.log('going to log out');
+    FB.logout();
+    $window.location.reload();
+  };
   $scope.addReport = function(formdata) {
     console.log('adding a report');
     formdata['userID'] = $scope.loggedInUser.authResponse.userID;
