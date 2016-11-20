@@ -86,9 +86,9 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
                   var filteredPostData = $scope.posts[data.OriginalText];
                   filteredPostData['userID'] = $scope.loggedInUser.email;
                   // filteredPostData['from'] = filteredPostData.from.id;
-                  $http.post('/post/'+$scope.loggedInUser.email, filteredPostData)
+                  $http.post('/posts/'+$scope.loggedInUser.authResponse.userID, filteredPostData)
                   .success(function(data){
-                    // yay
+                    console.log(data);
                   }).error(function(err){console.log(err);});
                   // Update view
                   $scope.$apply();
@@ -132,10 +132,8 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
     FB.logout();
     $window.location.reload();
   };
-  $scope.addReport = function(formdata) {
-    console.log('adding a report');
-    formdata['userID'] = $scope.loggedInUser.authResponse.userID;
-    $http.post('/report/', formdata)
+  $scope.addReport = function(status, fromID, postID) {
+    $http.get('/report/'+fromID+'/post/'+postID+'/status/'+status)
     .success(function(data){
       console.log('success report');
     })

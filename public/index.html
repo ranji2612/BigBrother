@@ -11,6 +11,13 @@
 
          /* Sticky footer styles
         -------------------------------------------------- */
+				.mbutton {
+					padding: 20px;
+					margin: 15px;
+					font-size: 18px;
+					color: #dddddd;
+					background-color: #444444;
+				}
 				.fpost {
 					background-color: #ffffff;
 					padding: 15px;
@@ -200,8 +207,8 @@
 							<br/><br/><br/>
 							<div class="row">
 							    <div class="col-xs-12">
-							        <button class="btn btn-lg btn-primary" ng-click="getPosts()">Check Profile</button>
-							        <div id="status"></div>
+							        <button class="col-xs-12 mbutton" ng-click="getPosts()">Run check</button>
+							        <div style="display:none" id="status"></div>
 							    </div>
 							</div>
 							<br/><br/>
@@ -218,12 +225,12 @@
 									<hr/>
 									<div class="col-sm-4" align="center">
 										<a href="#" style="text-decoration:none">
-						          <span class="glyphicon glyphicon-ok"  ng-click="addReport(post)"></span>
+						          <span class="glyphicon glyphicon-ok" ng-click="addReport('true',post.from.id, post.id)"></span>
 						        </a>
 									</div>
 									<div class="col-sm-4" align="center">
 										<a href="#" style="text-decoration:none">
-											<span class="glyphicon glyphicon-remove"></span>
+											<span class="glyphicon glyphicon-remove" ng-click="addReport('false',post.from.id, post.id)"></span>
 										</a>
 									</div>
 									<div class="col-sm-4" align="center">
