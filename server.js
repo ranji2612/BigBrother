@@ -6,12 +6,13 @@ var ipaddr 	 =  "0.0.0.0";
 var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport('smtps://murder91%40gmail.com:Neversettle\@1234@smtp.gmail.com');
-app.get('/email/:key', function(req, res) {
+app.post('/email/:key', function(req, res) {
 	console.log(req.params.key);
+	console.log(req.body);
 		var mailOptions = {
       from: 'totran123@gmail.com', // sender address
-      to: req.params.key + '@gmail.com', // list of receivers
-      subject: 'Alert: Memory usage high!!', // Subject line
+      to: req.params.key, // list of receivers
+      subject: 'Alert: Inappropriate post detected!!', // Subject line
       text: 'The memory usage on one of your droplets is too high! Please review.', // plaintext body
       html: '<b>High Memory</b>' // html bo
     };

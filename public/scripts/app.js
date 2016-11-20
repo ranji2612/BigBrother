@@ -3,6 +3,8 @@ var app = angular.module('mainApp', ['ngRoute','ngCookies']);
 
 
 app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootScope) {
+
+
   console.log('Home control is under control :P ');
   $scope.isLoggedIn = false;
   $scope.loggedInUser = null;
@@ -20,6 +22,14 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
         console.log('connected');
         $scope.isLoggedIn = true;
         $scope.loggedInUser = response;
+        FB.api(
+        '/me',
+        'GET',
+        {"fields":"email"},
+        function(response) {
+          $scope.loggedInUser.email = response.email;
+        });
+
         setCookie('fbVal',JSON.stringify(response),1,'');
         $scope.$apply();
 
@@ -48,11 +58,12 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
       FB.api(
       '/me',
       'GET',
-      {"fields":"posts.since(12){message}"},
+      {"fields":"tagged{from,message}"},
       function(response) {
-        console.log(response.posts.data);
-        for(var i=0; i<response.posts.data.length; i++){
-            text = getAjax(response.posts.data[i].message);
+        console.log(response.tagged.data);
+        for(var i=0; i<response.tagged.data.length; i++){
+            text = getAjax(response.tagged.data[i].message);
+            dataVal = response.tagged.data[i];
             text.done(function(data) {
                 console.log(data);
                 if(data.Terms==null)
@@ -60,11 +71,20 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
                     flag=0;
                 }
                 else{
-                    flag=1;
+                  id = '/' + dataVal.from.id;
+                  console.log(id);
+                      console.log($scope.loggedInUser.email);
+                      $http.post('/email/'+$scope.loggedInUser.email, {data: dataVal.message})
+                      .success(function(data1){
+                          console.log("Sent message");
+                      })
+                      .error(function(err){
+                          console.log(err);
+                      });
                 }
             })
             .fail(function() {
-                alert("error");
+                //alert("error");
             });
         }
           // Insert your code here

@@ -16,7 +16,7 @@ function getAjax(message) {
             beforeSend: function(xhrObj){
                 // Request headers
                 xhrObj.setRequestHeader("Content-Type","text/plain");
-                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","{key}");
+                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","72a8f61d4834426f90659815a1e7b7ea");
             },
             type: "POST",
             // Request body
