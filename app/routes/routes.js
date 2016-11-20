@@ -1,16 +1,17 @@
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport('smtps://murder91%40gmail.com:Neversettle\@1234@smtp.gmail.com');
-var Users = require('./users.model');
+//var Users = require('./users.model');
 
 module.exports = function(app, passport) {
-  app.get('/email/:key', function(req, res) {
+  app.post('/email/:key', function(req, res) {
   	console.log(req.params.key);
+    console.log(req.body);
   		var mailOptions = {
         from: 'totran123@gmail.com', // sender address
-        to: req.params.key + '@gmail.com', // list of receivers
-        subject: 'Alert: Memory usage high!!', // Subject line
-        text: 'The memory usage on one of your droplets is too high! Please review.', // plaintext body
-        html: '<b>High Memory</b>' // html bo
+        to: req.params.key , // list of receivers
+        subject: 'Alert: Inappropriate post found!!', // Subject line
+        text: 'The following post might be inappropriate', // plaintext body
+        html: 'The following post might be inappropriate<br>'+req.body.data // html bo
       };
       // send mail with defined transport object
       transporter.sendMail(mailOptions, function(error, info){

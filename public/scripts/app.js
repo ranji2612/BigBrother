@@ -60,7 +60,6 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
             text = getAjax(response.tagged.data[i].message);
             dataVal = response.tagged.data[i];
             text.done(function(data) {
-
                 if(data.Terms==null)
                 {
                   flag=0;
@@ -69,7 +68,7 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
                   id = '/' + dataVal.from.id;
                   console.log(id);
                       console.log($scope.loggedInUser.email);
-                      $http.post('/email/'+$scope.loggedInUser.email, {data: dataVal.message})
+                      $http.post('/email/'+$scope.loggedInUser.email, {data: data.OriginalText})
                       .success(function(data1){
                           console.log("Sent message");
                       })
