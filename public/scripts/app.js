@@ -88,7 +88,7 @@ $scope.imgNew=[];
                 else{
                   id = '/' + dataVal.from.id;
                   // Send Email
-                  $http.post('/email/'+$scope.loggedInUser.email, {data: data.OriginalText})
+                  $http.post('/email/'+$scope.loggedInUser.email, {data: data.OriginalText, url:$scope.posts[data.OriginalText].id.split("_")[1]})
                   .success(function(data1){
                       console.log("Sent message");
                   })
@@ -147,7 +147,7 @@ $scope.imgNew=[];
                   //console.log(data,urlId);
                   if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true) {
                     console.log('here');
-                  $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted", url:"responseNew.data.url"})
+                  $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted", url:urlId})
                       .success(function(data1){
                           console.log("Sent message");
                       })

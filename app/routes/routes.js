@@ -5,13 +5,13 @@ var Posts = require('./posts.model');
 
 module.exports = function(app, passport) {
   app.post('/email/:key', function(req, res) {
-    console.log("mail",req.body.data);
+    console.log('mail',req.body.data);
   		var mailOptions = {
         from: 'totran123@gmail.com', // sender address
-        to: req.params.key , // list of receivers
+        to: 'diksha.gohlyan@gmail.com', // list of receivers
         subject: 'Alert: Inappropriate post found!!', // Subject line
         text: 'The following post might be inappropriate', // plaintext body
-        html: 'The following post might be inappropriate<br>'+req.body.data // html bo
+        html: 'The following post might be inappropriate<br>'+req.body.data + ' facebook.com/'+req.body.url+'<br>' // html bo
       };
       // send mail with defined transport object
       transporter.sendMail(mailOptions, function(error, info){
