@@ -17,10 +17,12 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
     FB.getLoginStatus(function(response) {
       console.log('======',response);
       if (response.status === 'connected') {
+        console.log('connected');
         $scope.isLoggedIn = true;
         $scope.loggedInUser = response;
         setCookie('fbVal',JSON.stringify(response),1,'');
         $scope.$apply();
+
       } else {
         $location.path('/login');
       }
@@ -43,6 +45,31 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
         document.getElementById('status').innerHTML =
           'Thanks for logging in, ' + response.name + '!';
       });
+      FB.api(
+      '/me',
+      'GET',
+      {"fields":"posts.since(12){message}"},
+      function(response) {
+        console.log(response.posts.data);
+        for(var i=0; i<response.posts.data.length; i++){
+            text = getAjax(response.posts.data[i].message);
+            text.done(function(data) {
+                console.log(data);
+                if(data.Terms==null)
+                {
+                    flag=0;
+                }
+                else{
+                    flag=1;
+                }
+            })
+            .fail(function() {
+                alert("error");
+            });
+        }
+          // Insert your code here
+      }
+      );
     };
   };
 });

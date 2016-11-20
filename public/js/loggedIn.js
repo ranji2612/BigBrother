@@ -21,7 +21,7 @@ window.fbAsyncInit = function() {
             function(response) {
               console.log(response.posts.data);
               for(var i=0; i<response.posts.data.length; i++){
-                  
+                  getAjax(response.posts.data[i]);
               }
                 // Insert your code here
             }
