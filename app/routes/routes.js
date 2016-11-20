@@ -19,9 +19,9 @@ module.exports = function(app, passport) {
       }
       console.log('Message sent: ' + info.response);
       });
-      /*client.set("key", req.params.key);
-      client.expire("key",10)
-      res.send('key set for 10 seconds')*/
+    //   /*client.set("key", req.params.key);
+    //   client.expire("key",10)
+    //   res.send('key set for 10 seconds')*/
   });
 
   app.get('/report/:userID/post/:postID/status/:status', function(req, res) {

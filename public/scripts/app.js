@@ -117,6 +117,30 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
               {},
               function(responseNew) {
                 console.log(responseNew.data.url);
+                img=filterimage(responseNew.data.url);
+                img.done(function(data) {
+                    console.log(data);
+
+                    if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true)
+                    {
+                      console.log('came here');
+                        flag=1;
+                    }
+                    else
+                    {
+                      // Send Email
+                      $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
+                      .success(function(data1){
+                          console.log("Sent message");
+                      })
+                      .error(function(err){
+                          console.log(err);
+                      });
+                    }
+                    })
+                    img.fail(function() {
+                        alert("error");
+                  });
                   // Insert your code here
               }
             );
