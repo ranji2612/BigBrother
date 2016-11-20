@@ -6,6 +6,8 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
 
 
   console.log('Home control is under control :P ');
+
+$scope.imgNew=[];
   $scope.isLoggedIn = false;
   $scope.loggedInUser = null;
   $scope.filteredPosts = [];
@@ -126,55 +128,78 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
         console.log("photos");
         console.log(response);
         for(var i=0; i<response.photos.data.length; i++){
-            id = '/'+response.photos.data[i].id;
-            $scope.photos[id] = response.tagged.data[i];
-            console.log(id);
+            id = response.photos.data[i].id;
             FB.api(
-              id+'/picture',
+              '/'+id+'/picture',
               'GET',
               {},
               function(responseNew) {
-                console.log(responseNew.data.url);
-                img=filterimage(responseNew.data.url);
-                img.done(function(data) {
+                //console.log(responseNew.data.url);
+                urlId=responseNew.data.url.split("720/")[1];
+                if(urlId!=undefined) urlId = urlId.split("_")[1];
+                if(urlId!=undefined) urlId=urlId.split("_")[0];
+                $scope.posts[responseNew.data.url]=responseNew;
+                image=filterimage(responseNew.data.url);
+                image.done(function(data){
                   console.log(data);
-                  if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true)
-                  {
-                    console.log('came here');
-                    flag=1;
-                  }
-                  else
-                  {
-                    // Send Email
-                    $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
-                    .success(function(data1){
-                        console.log("Sent message");
-                    })
-                    .error(function(err){
-                        console.log(err);
-                    });
-                    var photo = $scope.photo[];
-                    if (!(post.id in $scope.filteredPostId)) {
-                      post['status'] = 'pending';
-                      $scope.filteredPosts.push(post);
-                      $scope.filteredPostId[post.id] = 1;
-                      var filteredPostData = $scope.posts[data.OriginalText];
-                      // filteredPostData['from'] = filteredPostData.from.id;
-                      $http.post('/posts/'+$scope.loggedInUser.authResponse.userID, filteredPostData)
-                      .success(function(data){
-                        console.log('----',data);
-                      }).error(function(err){console.log(err);});
-                      // Update view
-                      $scope.$apply();
-                    } else {
-                      console.log('post already in system');
-                    }
-                  }
-                })
-                img.fail(function(err) {
-                    // alert("error");
-                    console.log(err)
+                  //console.log(data,urlId);
+                  if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true) {
+                    console.log('here');
+                  $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
+                      .success(function(data1){
+                          console.log("Sent message");
+                      })
+                      .error(function(err){
+                          console.log(err);
+                      });
+                      console.log($scope.loggedInUser.authResponse.userID,urlId);
+                  $http.post('/posts/'+$scope.loggedInUser.authResponse.userID, {id:$scope.loggedInUser.authResponse.userID+'_'+urlId, status:"pending", userID:$scope.loggedInUser.authResponse.userID})
+                        .success(function(data){
+                          console.log('----',data);
+                        }).error(function(err){console.log(err);});
+                      }
                 });
+              //   if(image.readyState===4) {
+              //   console.log(image.responseText);
+              // }
+              /*  if(image.responseText!="" && image.responseText!=undefined){
+                  console.log(image.responseText);
+                  if(image.responseText.contains("true")!=-1) {
+                  console.log("Inappropriate image");
+                  console.log(response.data.url);
+                }
+              }*/
+                // img.done(function(data) {
+                //   console.log('This');
+                //   console.log(data);
+                //   if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true)
+                //   {
+                //     $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
+                //     .success(function(data1){
+                //         console.log("Sent message");
+                //     })
+                //     .error(function(err){
+                //         console.log(err);
+                //     });
+                //       $http.post('/posts/'+$scope.loggedInUser.authResponse.userID, responseNew.data.id)
+                //       .success(function(data){
+                //         console.log('----',data);
+                //       }).error(function(err){console.log(err);});
+                //       // Update view
+                //       $scope.$apply();
+                //     console.log('came here');
+                //     flag=1;
+                //   }
+                //   else
+                //   {
+                //     // Send Email
+                //
+                //     }
+                // })
+                // img.fail(function(err) {
+                //     // alert("error");
+                //     console.log(err)
+                // });
             });
           }
       });
