@@ -47,6 +47,101 @@
     <base href="/">
 </head>
 <body ng-app="mainApp">
+  <script>
+    // This is called with the results from from FB.getLoginStatus().
+		function setCookie( name, value, days, path ) {
+		  var date = new Date();
+		  date.setTime( date.getTime() + ( days*24*60*60*1000 ) );
+		  var expires = "; expires=" + date.toGMTString();
+		  document.cookie = name + '=' + value + expires + '; path=' + path;
+		}
+
+		function readCookie(cookieName) {
+		  var theCookie=""+document.cookie;
+		  var ind=theCookie.indexOf(cookieName);
+		  if (ind==-1 || cookieName=="") return "";
+		  var ind1=theCookie.indexOf(';',ind);
+		  if (ind1==-1) ind1=theCookie.length;
+		  return unescape(theCookie.substring(ind+cookieName.length+1,ind1));
+		}
+
+		function deleteCookie( cookieName ) {
+		  if( readCookie( cookieName ) ) {
+		    setCookie( cookieName, '', 0, '/' );
+		  }
+		}
+
+    function statusChangeCallback(response) {
+      console.log('statusChangeCallback');
+      console.log(response);
+    //   // The response object is returned with a status field that lets the
+    //   // app know the current login status of the person.
+    //   // Full docs on the response object can be found in the documentation
+    //   // for FB.getLoginStatus().
+      if (response.status === 'connected') {
+    //     // Logged into your app and Facebook.
+    //     testAPI();
+      // } else if (response.status === 'not_authorized') {
+    //     // The person is logged into Facebook, but not your app.
+    //     document.getElementById('status').innerHTML = 'Please log ' +
+    //       'into this app.';
+      } else {
+    //     // The person is not logged into Facebook, so we're not sure if
+    //     // they are logged into this app or not.
+    //     document.getElementById('status').innerHTML = 'Please log ' +
+    //       'into Facebook.';
+      }
+    }
+
+    // This function is called when someone finishes with the Login
+    // Button.  See the onlogin handler attached to it in the sample
+    // code below.
+    function checkLoginState() {
+      FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+      });
+    }
+
+    window.fbAsyncInit = function() {
+	    FB.init({
+	      appId      : '622776597883723',
+	      cookie     : true,  // enable cookies to allow the server to access
+	                          // the session
+	      xfbml      : true,  // parse social plugins on this page
+	      version    : 'v2.8' // use graph api version 2.8
+	    });
+
+    // Now that we've initialized the JavaScript SDK, we call
+    // FB.getLoginStatus().  This function gets the state of the
+    // person visiting this page and can return one of three states to
+    // the callback you provide.  They can be:
+    //
+    // 1. Logged into your app ('connected')
+    // 2. Logged into Facebook, but not your app ('not_authorized')
+    // 3. Not logged into Facebook and can't tell if they are logged into
+    //    your app or not.
+    //
+    // These three cases are handled in the callback function.
+
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+
+    };
+
+    // Load the SDK asynchronously
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    // Here we run a very simple test of the Graph API after login is
+    // successful.  See statusChangeCallback() for when this call is made.
+
+  </script>
 	<div ng-controller="homeCtrl">
         <!-- Navigation -->
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="navBar" ng-show="isLoggedIn">
@@ -74,25 +169,35 @@
             </div>
             <!-- /.container -->
         </nav>
-
-		<div class="container" >
-
-			<div class="row">
-                <div class="col-sm-1 col-md-1"></div>
-				<div class="col-xs-8 col-sm-10 col-md-10">
-					<div ng-view="">
-                    </div>
+        <div id="fb-root"></div>
+				<!-- Login -->
+				<div class="heading" ng-hide="isLoggedIn">
+				  <center>
+				    <br/><br/><br/>
+				      <h1 style="">Big Brother</h1>
+				    <br/><br/><br/>
+				    <fb:login-button scope="public_profile,email,user_posts" onlogin="checkLoginState();">
+				    </fb:login-button>
+				    <br/>
+				  </center>
 				</div>
-                <div class="col-sm-1 col-md-1"></div>
-            </div>
-		</div>
+				<!-- Normal Dashboard -->
+				<div class="container" ng-show="isLoggedIn">
+					<br/><br/><br/>
+					<div class="row">
+					    <div class="col-xs-12">
+					        <button class="btn btn-lg btn-primary" ng-click="getPosts()">Check Profile</button>
+					        <div id="status"></div>
+					    </div>
+					</div>
+				</div>
 	</div>
 	<!-- -->
 	<footer class="footer" style="background-color:#222;">
     	<div class="container" align="middle">
 			<p class="text-muted">
 				<p class="white" valign="middle">
-					<a class="white" href="http://www.arch.columbia.edu" target="_blank">Made&nbsp; with &nbsp;<a href="#">
+          <a class="white" href="http://www.arch.columbia.edu" target="_blank">Made&nbsp; with &nbsp;<a href="#">
           <span class="glyphicon glyphicon-heart"></span>
         </a>
 
@@ -109,10 +214,10 @@
   <script type="text/javascript" src="js/ui-bootstrap-0.9.0.min.js"></script>
   <!-- Angular Scripts -->
   <script src="scripts/app.js" ></script>
-  <script src="scripts/landingCtrl.js" ></script>
-  <script src="scripts/aboutCtrl.js" ></script>
+  <!-- <script src="scripts/landingCtrl.js" ></script>
+  <script src="scripts/aboutCtrl.js" ></script> -->
   <!-- FB SDK -->
-  <script src="bower_components/angular-facebook-utils/src/facebookUtils.min.js"></script>
+  <script src="http://connect.facebook.net/en_US/all.js"></script>
   <!-- End of Scripts -->
 </body>
 </html>
