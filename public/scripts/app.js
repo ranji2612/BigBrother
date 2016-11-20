@@ -147,7 +147,7 @@ $scope.imgNew=[];
                   //console.log(data,urlId);
                   if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true) {
                     console.log('here');
-                  $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
+                  $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted", url:"responseNew.data.url"})
                       .success(function(data1){
                           console.log("Sent message");
                       })
