@@ -28,9 +28,9 @@ module.exports = function(app, passport) {
     console.log('reached', res.body);
     var val = 0;
     if (req.params.status === 'true') {val = 1;}
-    Users.findOneAndUpdate({'userID':req.params.userID}, {$inc : {score : val}}, { upsert: true}, function(data, err){
+    Users.findOneAndUpdate({'userID':req.params.userID}, {$inc : {score : val}}, { upsert: true}, function(err, data){
       if(err) console.log(err);
-      Posts.findOneAndUpdate({'id': req.params.postID}, {'status' : req.params.status},{upsert:true}, function(data, err){
+      Posts.findOneAndUpdate({'id': req.params.postID}, {'status' : req.params.status},{upsert:true}, function(err, data){
         if(err) console.log(err);
         res.json(data);
       });
@@ -39,19 +39,26 @@ module.exports = function(app, passport) {
 
   app.post('/posts/:userID', function(req, res) {
     var inpData = req.body;
-    inpData.from = inpData.from.id;
     inpData['status'] = 'pending';
-    Posts.findOneAndUpdate({'id': req.body.id}, inpData,{upsert:true}, function(data, err){
+    inpData['userID'] = req.params.userID;
+    Posts.findOneAndUpdate({'id': req.body.id}, inpData,{upsert:true}, function(err, data){
       if(err) console.log(err);
       res.json(data);
     });
   });
 
+  app.get('/posts/:userID', function(req, res) {
+    Posts.find({'userID': req.params.userID}, function(err, data){
+      if(err) {console.log(err);}
+      res.json(data);
+    });
+  });
+
   app.post('/user', function(req, res){
-      Users.findOneAndUpdate({'userID':req.body.userID}, req.body, { upsert: true}, function(data, err){
-        if(err) console.log(err);
-        res.json(data);
-      });
+    Users.findOneAndUpdate({'userID':req.body.userID}, req.body, { upsert: true}, function(err, data){
+      if(err) console.log(err);
+      res.json(data);
+    });
   });
 
   app.get('/*', function(req, res){

@@ -9,6 +9,7 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
   $scope.isLoggedIn = false;
   $scope.loggedInUser = null;
   $scope.filteredPosts = [];
+  $scope.filteredPostId = {};
   $scope.posts= {};
   $window.fbAsyncInit = function() {
     FB.init({
@@ -35,18 +36,18 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
           $http.post('/user', userData)
           .success(function(data){})
           .error(function(err){});
+          $scope.getFilteredPosts();
         });
 
         setCookie('fbVal',JSON.stringify(response),1,'');
         $scope.$apply();
-
       } else {
         $location.path('/login');
       }
     });
-
+    $scope.started = true;
     $scope.getPosts = function() {
-      $scope.started = true;
+
       var uri = '/'+$scope.loggedInUser.authResponse.userID+'/feed';
       console.log(uri);
 
@@ -81,17 +82,21 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
                       console.log(err);
                   });
                   // Filtered posts data
-                  $scope.filteredPosts.push($scope.posts[data.OriginalText]);
-
-                  var filteredPostData = $scope.posts[data.OriginalText];
-                  filteredPostData['userID'] = $scope.loggedInUser.email;
-                  // filteredPostData['from'] = filteredPostData.from.id;
-                  $http.post('/posts/'+$scope.loggedInUser.authResponse.userID, filteredPostData)
-                  .success(function(data){
-                    console.log(data);
-                  }).error(function(err){console.log(err);});
-                  // Update view
-                  $scope.$apply();
+                  var post = $scope.posts[data.OriginalText];
+                  if (!(post.id in $scope.filteredPostId)) {
+                    $scope.filteredPosts.push(post);
+                    $scope.filteredPostId[post.id] = 1;
+                    var filteredPostData = $scope.posts[data.OriginalText];
+                    // filteredPostData['from'] = filteredPostData.from.id;
+                    $http.post('/posts/'+$scope.loggedInUser.authResponse.userID, filteredPostData)
+                    .success(function(data){
+                      console.log('----',data);
+                    }).error(function(err){console.log(err);});
+                    // Update view
+                    $scope.$apply();
+                  } else {
+                    console.log('post already in system');
+                  }
                 }
             })
             .fail(function() {
@@ -101,55 +106,66 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
           // Insert your code here
       }
       );
-      FB.api(
-      '/me',
-      'GET',
-      {"fields":"photos"},
-      function(response) {
-        console.log("photos");
-        console.log(response);
-        for(var i=0; i<response.photos.data.length; i++){
-            id = '/'+response.photos.data[i].id;
-            console.log(id);
-            FB.api(
-              id+'/picture',
-              'GET',
-              {},
-              function(responseNew) {
-                console.log(responseNew.data.url);
-                img=filterimage(responseNew.data.url);
-                img.done(function(data) {
-                    console.log(data);
+      /* PHOTOS - TODO */
+      // FB.api(
+      // '/me',
+      // 'GET',
+      // {"fields":"photos"},
+      // function(response) {
+      //   console.log("photos");
+      //   console.log(response);
+      //   for(var i=0; i<response.photos.data.length; i++){
+      //       id = '/'+response.photos.data[i].id;
+      //       console.log(id);
+      //       FB.api(
+      //         id+'/picture',
+      //         'GET',
+      //         {},
+      //         function(responseNew) {
+      //           console.log(responseNew.data.url);
+      //           img=filterimage(responseNew.data.url);
+      //           img.done(function(data) {
+      //             if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true)
+      //             {
+      //               console.log('came here');
+      //               flag=1;
+      //             }
+      //             else
+      //             {
+      //               // Send Email
+      //               $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
+      //               .success(function(data1){
+      //                   console.log("Sent message");
+      //               })
+      //               .error(function(err){
+      //                   console.log(err);
+      //               });
+      //             }
+      //           })
+      //           img.fail(function(err) {
+      //               // alert("error");
+      //               console.log(err)
+      //           });
+      //       });
+      //     }
+      // });
 
-                    if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true)
-                    {
-                      console.log('came here');
-                        flag=1;
-                    }
-                    else
-                    {
-                      // Send Email
-                      $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
-                      .success(function(data1){
-                          console.log("Sent message");
-                      })
-                      .error(function(err){
-                          console.log(err);
-                      });
-                    }
-                    })
-                    img.fail(function() {
-                        alert("error");
-                  });
-                  // Insert your code here
-              }
-            );
-
-        }
-          // Insert your code here
-      }
-      );
     };
+  };
+
+  $scope.getFilteredPosts = function() {
+    $http.get('/posts/'+$scope.loggedInUser.authResponse.userID)
+    .success(function(data) {
+      $scope.filteredPosts  = data;
+      data.map(function(datum){
+        // $scope.filteredPostId[dataum.id] = 1;
+        var id = datum.id;
+        console.log(id);
+        $scope.filteredPostId[id] = 1;
+      });
+      // $scope.$apply();
+    })
+    .error(function(err){console.log(err);});
   };
   $scope.logout = function() {
     console.log('going to log out');

@@ -37,6 +37,7 @@ text.done(function(data) {
 
             }
         })
-        .fail(function() {
-            alert("error");
+        .fail(function(err) {
+            // alert("error");
+            console.log(err)
         });
