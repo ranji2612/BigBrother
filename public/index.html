@@ -11,6 +11,14 @@
 
          /* Sticky footer styles
         -------------------------------------------------- */
+				.accepted {
+					background-color: #96f59e;
+					border-radius: 50%;
+					padding: 5px;
+					margin: 5px;
+					width: 20%;
+					text-align: center;
+				}
 				.mbutton {
 					padding: 20px;
 					margin: 15px;
@@ -227,17 +235,20 @@
 										</a>
 									</p>
 									<hr/>
-									<div class="col-sm-4" align="center">
+									<div class="col-xs-4" align="center" ng-hide="post.status !== 'pending'">
 										<a href="#" style="text-decoration:none">
 						          <span class="glyphicon glyphicon-ok" ng-click="addReport('true',post.from.id, post.id)"></span>
 						        </a>
 									</div>
-									<div class="col-sm-4" align="center">
+									<div class="col-xs-4" align="center" ng-hide="post.status !== 'pending'">
 										<a href="#" style="text-decoration:none">
 											<span class="glyphicon glyphicon-remove" ng-click="addReport('false',post.from.id, post.id)"></span>
 										</a>
 									</div>
-									<div class="col-sm-4" align="center">
+									<div class="col-xs-8" align="left" ng-show="post.status !== 'pending'">
+										<p class="accepted">Reported</p>
+									</div>
+									<div class="col-xs-4" align="center">
 										<a target="_blank" href="https://www.facebook.com/{{post.id}}" style="text-decoration:none">
 											<span class="glyphicon glyphicon-share-alt"></span>
 										</a>

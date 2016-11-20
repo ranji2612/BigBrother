@@ -48,7 +48,15 @@ module.exports = function(app, passport) {
   });
 
   app.get('/posts/:userID', function(req, res) {
-    Posts.find({'userID': req.params.userID}, function(err, data){
+    Posts.find({'userID': req.params.userID, 'status': { $in : ['pending', 'true']}}, function(err, data){
+      if(err) {console.log(err);}
+      res.json(data);
+    });
+  });
+
+  app.get('/posts/postid/:postID', function(req, res) {
+    // Usage Eg. $http.get('/posts/postid/'+postID)
+    Posts.find({'id': req.params.postID}, function(err, data){
       if(err) {console.log(err);}
       res.json(data);
     });

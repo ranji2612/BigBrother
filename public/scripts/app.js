@@ -84,6 +84,7 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
                   // Filtered posts data
                   var post = $scope.posts[data.OriginalText];
                   if (!(post.id in $scope.filteredPostId)) {
+                    post['status'] = 'pending';
                     $scope.filteredPosts.push(post);
                     $scope.filteredPostId[post.id] = 1;
                     var filteredPostData = $scope.posts[data.OriginalText];
