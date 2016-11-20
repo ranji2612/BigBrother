@@ -101,12 +101,13 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
         console.log(response);
         for(var i=0; i<response.photos.data.length; i++){
             id = '/'+response.photos.data[i].id;
+            console.log(id);
             FB.api(
-              id,
+              id+'/picture',
               'GET',
-              {"fields":"picture"},
-              function(response) {
-                console.log(response.picture);
+              {},
+              function(responseNew) {
+                console.log(responseNew.data.url);
                   // Insert your code here
               }
             );
