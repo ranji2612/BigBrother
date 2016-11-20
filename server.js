@@ -4,7 +4,7 @@ var app      = express(); 								// create our app w/ express
 var port  	 = 8080; 				//
 var ipaddr 	 =  "0.0.0.0";
 var mongoose = require('mongoose'); 					// mongoose for mongodb
-var db = mongoose.connect('mongodb://localhost:27017/bigbrother');	
+var db = mongoose.connect('mongodb://172.30.8.117:27017/bigbrother');	
 var nodemailer = require('nodemailer');
 
 //Middle-tier configuration
