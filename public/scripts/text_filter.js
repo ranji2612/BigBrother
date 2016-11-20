@@ -16,7 +16,7 @@ function getAjax(message) {
             beforeSend: function(xhrObj){
                 // Request headers
                 xhrObj.setRequestHeader("Content-Type","text/plain");
-                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","72a8f61d4834426f90659815a1e7b7ea");
+                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","{key}");
             },
             type: "POST",
             // Request body
@@ -34,7 +34,7 @@ text.done(function(data) {
                 flag=0;
             }
             else{
-                flag=1;
+
             }
         })
         .fail(function() {

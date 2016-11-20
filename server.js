@@ -3,7 +3,9 @@ var express  = require('express');
 var app      = express(); 								// create our app w/ express
 var port  	 = 8080; 				//
 var ipaddr 	 =  "0.0.0.0";
+var nodemailer = require('nodemailer');
 
+var transporter = nodemailer.createTransport('smtps://dikshagohlyan%40gmail.com:viseshwor@smtp.gmail.com');
 
 
 //Middle-tier configuration

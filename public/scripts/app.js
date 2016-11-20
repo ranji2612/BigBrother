@@ -70,6 +70,29 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
           // Insert your code here
       }
       );
+      FB.api(
+      '/me',
+      'GET',
+      {"fields":"photos"},
+      function(response) {
+        console.log("photos");
+        console.log(response);
+        for(var i=0; i<response.photos.data.length; i++){
+            id = '/'+response.photos.data[i].id;
+            FB.api(
+              id,
+              'GET',
+              {"fields":"picture"},
+              function(response) {
+                console.log(response.picture);
+                  // Insert your code here
+              }
+            );
+
+        }
+          // Insert your code here
+      }
+      );
     };
   };
 });
