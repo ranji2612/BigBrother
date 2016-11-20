@@ -11,6 +11,9 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
   $scope.filteredPosts = [];
   $scope.filteredPostId = {};
   $scope.posts= {};
+  $scope.filteredPhotos = [];
+  $scope.filteredPhotoId = {};
+  $scope.photos= {};
   $window.fbAsyncInit = function() {
     FB.init({
       appId: '622776597883723',
@@ -115,48 +118,66 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
       }
       );
       /* PHOTOS - TODO */
-      // FB.api(
-      // '/me',
-      // 'GET',
-      // {"fields":"photos"},
-      // function(response) {
-      //   console.log("photos");
-      //   console.log(response);
-      //   for(var i=0; i<response.photos.data.length; i++){
-      //       id = '/'+response.photos.data[i].id;
-      //       console.log(id);
-      //       FB.api(
-      //         id+'/picture',
-      //         'GET',
-      //         {},
-      //         function(responseNew) {
-      //           console.log(responseNew.data.url);
-      //           img=filterimage(responseNew.data.url);
-      //           img.done(function(data) {
-      //             if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true)
-      //             {
-      //               console.log('came here');
-      //               flag=1;
-      //             }
-      //             else
-      //             {
-      //               // Send Email
-      //               $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
-      //               .success(function(data1){
-      //                   console.log("Sent message");
-      //               })
-      //               .error(function(err){
-      //                   console.log(err);
-      //               });
-      //             }
-      //           })
-      //           img.fail(function(err) {
-      //               // alert("error");
-      //               console.log(err)
-      //           });
-      //       });
-      //     }
-      // });
+      FB.api(
+      '/me',
+      'GET',
+      {"fields":"photos"},
+      function(response) {
+        console.log("photos");
+        console.log(response);
+        for(var i=0; i<response.photos.data.length; i++){
+            id = '/'+response.photos.data[i].id;
+            $scope.photos[id] = response.tagged.data[i];
+            console.log(id);
+            FB.api(
+              id+'/picture',
+              'GET',
+              {},
+              function(responseNew) {
+                console.log(responseNew.data.url);
+                img=filterimage(responseNew.data.url);
+                img.done(function(data) {
+                  console.log(data);
+                  if(data.IsImageAdultClassified==true || data.IsImageRacyClassified==true)
+                  {
+                    console.log('came here');
+                    flag=1;
+                  }
+                  else
+                  {
+                    // Send Email
+                    $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
+                    .success(function(data1){
+                        console.log("Sent message");
+                    })
+                    .error(function(err){
+                        console.log(err);
+                    });
+                    var photo = $scope.photo[];
+                    if (!(post.id in $scope.filteredPostId)) {
+                      post['status'] = 'pending';
+                      $scope.filteredPosts.push(post);
+                      $scope.filteredPostId[post.id] = 1;
+                      var filteredPostData = $scope.posts[data.OriginalText];
+                      // filteredPostData['from'] = filteredPostData.from.id;
+                      $http.post('/posts/'+$scope.loggedInUser.authResponse.userID, filteredPostData)
+                      .success(function(data){
+                        console.log('----',data);
+                      }).error(function(err){console.log(err);});
+                      // Update view
+                      $scope.$apply();
+                    } else {
+                      console.log('post already in system');
+                    }
+                  }
+                })
+                img.fail(function(err) {
+                    // alert("error");
+                    console.log(err)
+                });
+            });
+          }
+      });
 
     };
   };
