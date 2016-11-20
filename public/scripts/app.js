@@ -27,6 +27,7 @@ $scope.imgNew=[];
     FB.getLoginStatus(function(response) {
       console.log('======',response);
       if (response.status === 'connected') {
+        document.getElementsByTagName('body')[0].className = "";
         console.log('connected');
         $scope.isLoggedIn = true;
         $scope.loggedInUser = response;
@@ -55,6 +56,7 @@ $scope.imgNew=[];
         $scope.$apply();
       } else {
         $location.path('/login');
+        document.getElementsByTagName('body')[0].className = "login";
       }
     });
     $scope.started = true;
