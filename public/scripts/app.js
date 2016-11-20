@@ -128,8 +128,14 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
                     }
                     else
                     {
-                      console.log('came here fail');
-                        flag=0;
+                      // Send Email
+                      $http.post('/email/'+$scope.loggedInUser.email, {data:"Inappropriate image posted"})
+                      .success(function(data1){
+                          console.log("Sent message");
+                      })
+                      .error(function(err){
+                          console.log(err);
+                      });
                     }
                     })
                     img.fail(function() {
