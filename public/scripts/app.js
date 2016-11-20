@@ -6,6 +6,8 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
   console.log('Home control is under control :P ');
   $scope.isLoggedIn = false;
   $scope.loggedInUser = null;
+  $scope.filteredPosts = [];
+  $scope.posts= {};
   $window.fbAsyncInit = function() {
     FB.init({
       appId: '622776597883723',
@@ -29,19 +31,12 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
     });
 
     $scope.getPosts = function() {
+      $scope.started = true;
       var uri = '/'+$scope.loggedInUser.authResponse.userID+'/feed';
       console.log(uri);
-      FB.api(
-        uri,
-        'GET',
-        {},
-        function(response) {
-            // Insert your code here
-            console.log(response);
-        }
-      );
+
       FB.api('/me', function(response) {
-        console.log('Successful login for: ' + response.name);
+        console.log('Successful login for: ' + response.name, response);
         document.getElementById('status').innerHTML =
           'Thanks for logging in, ' + response.name + '!';
       });
@@ -51,16 +46,20 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
       {"fields":"posts.since(12){message}"},
       function(response) {
         console.log(response.posts.data);
+
         for(var i=0; i<response.posts.data.length; i++){
             text = getAjax(response.posts.data[i].message);
+            $scope.posts[response.posts.data[i].message] = response.posts.data[i];
             text.done(function(data) {
-                console.log(data);
+
                 if(data.Terms==null)
                 {
-                    flag=0;
+                  flag=0;
                 }
                 else{
-                    flag=1;
+                  console.log(data, $scope.posts[data.OriginalText]);
+                  $scope.filteredPosts.push($scope.posts[data.OriginalText]);
+                  $scope.$apply();
                 }
             })
             .fail(function() {
@@ -95,4 +94,17 @@ app.controller('homeCtrl', function ($scope, $http, $location, $window, $rootSco
       );
     };
   };
+
+  $scope.addReport = function(formdata) {
+    console.log('adding a report');
+    formdata['userID'] = $scope.loggedInUser.authResponse.userID;
+    $http.post('/report/', formdata)
+    .success(function(data){
+      console.log('success report');
+    })
+    .error(function(err){
+      console.log('error', err);
+    });
+  };
+
 });
