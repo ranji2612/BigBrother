@@ -134,7 +134,7 @@ $scope.imgNew=[];
               'GET',
               {},
               function(responseNew) {
-                //console.log(responseNew.data.url);
+                console.log(responseNew.data.url);
                 urlId=responseNew.data.url.split("720/")[1];
                 if(urlId!=undefined) urlId = urlId.split("_")[1];
                 if(urlId!=undefined) urlId=urlId.split("_")[0];
@@ -153,7 +153,12 @@ $scope.imgNew=[];
                           console.log(err);
                       });
                       console.log($scope.loggedInUser.authResponse.userID,urlId);
-                  $http.post('/posts/'+$scope.loggedInUser.authResponse.userID, {id:$scope.loggedInUser.authResponse.userID+'_'+urlId, status:"pending", userID:$scope.loggedInUser.authResponse.userID})
+                  $http.post(
+                    '/posts/'+$scope.loggedInUser.authResponse.userID,
+                    { id:$scope.loggedInUser.authResponse.userID+'_'+urlId, status:"pending",
+                      userID:$scope.loggedInUser.authResponse.userID,
+                      imgUrl: responseNew.data.url
+                    })
                         .success(function(data){
                           console.log('----',data);
                         }).error(function(err){console.log(err);});
