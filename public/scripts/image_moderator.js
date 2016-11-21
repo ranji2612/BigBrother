@@ -13,7 +13,7 @@ function filterimage(img) {
             beforeSend: function(xhrObj){
                 // Request headers
                 xhrObj.setRequestHeader("Content-Type","application/json");
-                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","72a8f61d4834426f90659815a1e7b7ea");
+                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","");
             },
             async: false,
             type: "POST",
